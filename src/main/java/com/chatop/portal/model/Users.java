@@ -2,6 +2,7 @@ package com.chatop.portal.model;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,7 +14,9 @@ public class Users {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     private String email;
-    private String name;
+    private String role;
+    @Column(name = "name")
+    private String username;
     private String password;
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
@@ -27,6 +30,10 @@ public class Users {
         this.id = id;
     }
 
+    public String getRole() {
+        return role;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -36,11 +43,11 @@ public class Users {
     }
 
     public String getName() {
-        return name;
+        return username;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.username = name;
     }
 
     public String getPassword() {
