@@ -16,7 +16,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name= "ourusers")
+@Table(name= "users")
 public class Users implements UserDetails {
     
     @Id
@@ -27,6 +27,7 @@ public class Users implements UserDetails {
     private String password;
     private String role;
 
+    // Get the authorization role for the user
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         

@@ -4,10 +4,13 @@ package com.chatop.portal.utils;
 import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
 import com.chatop.portal.exception.TokenErrorException;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

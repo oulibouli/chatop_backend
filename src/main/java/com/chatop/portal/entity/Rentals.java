@@ -1,4 +1,4 @@
-package com.chatop.portal.model;
+package com.chatop.portal.entity;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +11,7 @@ import jakarta.persistence.Id;
 public class Rentals {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     private String name;
     private int surface;
     private int price;
@@ -22,11 +22,11 @@ public class Rentals {
     private LocalDateTime updated_at;
 
     // Defining the getters / setters
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
