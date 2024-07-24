@@ -21,9 +21,8 @@ public class RentalsService {
             .collect(Collectors.toList());
     }
 
-    public Optional<RentalDTO> getRental(Long id) {
-        return rentalsRepository.findById(id)
-            .map(this::convertToDTO);
+    public Optional<Rentals> getRental(Long id) {
+        return rentalsRepository.findById(id);
     }
 
     public RentalDTO addRental(Rentals rental) {
