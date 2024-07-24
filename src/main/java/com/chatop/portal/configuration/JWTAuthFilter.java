@@ -11,8 +11,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.chatop.portal.services.JWTUtils;
 import com.chatop.portal.services.OurUserDetailsService;
+import com.chatop.portal.utils.JWTUtils;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

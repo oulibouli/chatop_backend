@@ -1,7 +1,5 @@
 package com.chatop.portal.services;
 
-import java.util.HashMap;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.chatop.portal.dto.ReqRes;
 import com.chatop.portal.entity.OurUsers;
 import com.chatop.portal.repository.OurUserRepo;
+import com.chatop.portal.utils.JWTUtils;
 
 @Service
 public class AuthService {
@@ -51,10 +50,8 @@ public class AuthService {
             var user = ourUserRepo.findByEmail(signinRequest.getEmail()).orElseThrow();
             System.out.println("USER is :" + user);
             var jwt = jwtUtils.generateToken(user);
-            var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
             response.setStatusCode(200);
             response.setToken(jwt);
-            response.setRefreshToken(refreshToken);
             response.setExpirationTime("24Hrs");
             response.setMessage("Successfully signed in");
         } catch (Exception e) {
@@ -63,22 +60,4 @@ public class AuthService {
         }
         return response;
     }
-
-    public ReqRes refreshToken(ReqRes refreshTokenRequest) {
-        ReqRes response = new ReqRes();
-        String ourEmail = jwtUtils.extractUsername(refreshTokenRequest.getToken());
-        OurUsers users = ourUserRepo.findByEmail(ourEmail).orElseThrow();
-        if(jwtUtils.isTokenValid(refreshTokenRequest.getToken(), users)) {
-            var jwt = jwtUtils.generateToken(users);
-            response.setStatusCode(200);
-            response.setToken(jwt);
-            response.setRefreshToken(refreshTokenRequest.getToken());
-            response.setExpirationTime("24Hrs");
-            response.setMessage("Successfully refreshed token");
-        }
-        response.setStatusCode(500);
-
-        return response;
-    }
-
 }
