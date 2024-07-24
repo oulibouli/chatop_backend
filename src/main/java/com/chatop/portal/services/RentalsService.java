@@ -17,7 +17,7 @@ public class RentalsService {
         return rentalsRepository.findAll();
     }
 
-    public Optional<Rentals> getRental(final Long id) {
+    public Optional<Rentals> getRental(Long id) {
         return rentalsRepository.findById(id);
     }
 

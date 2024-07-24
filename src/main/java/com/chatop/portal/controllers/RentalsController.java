@@ -1,11 +1,14 @@
 package com.chatop.portal.controllers;
 
+import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,7 +23,6 @@ import com.chatop.portal.services.RentalsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-
 @Tag(name="Rentals")
 @Controller // Declare this class as a controller
 @RequestMapping(path= "/api/rentals")  //URL start with /rentals
@@ -30,19 +32,27 @@ public class RentalsController {
 
     @GetMapping("/") // Map this parameter to the method
     public @ResponseBody Iterable<Rentals> getRentals() {
-        return rentalsService.getAllRentals(); // This returns a JSON or XML with the users
+         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        System.out.println("User: " + currentPrincipalName);
+        System.out.println(authorities);
+        for (GrantedAuthority authority : authorities) {
+            System.out.println("Role: " + authority.getAuthority());
+        }
+
+        return rentalsService.getAllRentals();
     }
 
     @Operation(summary="Get the rental by id")
     @GetMapping("/{id}")
-    public ResponseEntity<Rentals> getRental(@PathVariable("id") final Long id) {
-        Optional<Rentals> rental = rentalsService.getRental(id);
-        if(rental.isPresent()) {
-            return new ResponseEntity<>(rental.get(), HttpStatus.OK);
-        }
-        else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Rentals> getRental(@PathVariable("id") Long id) {
+        Optional<Rentals> Optionalrental = rentalsService.getRental(id);
+        return Optionalrental
+            .map(rental -> ResponseEntity.ok(rental))
+            .orElseGet(() -> ResponseEntity.notFound().build());
+
     }
 
     // @PostMapping("/")
