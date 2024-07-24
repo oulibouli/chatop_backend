@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.chatop.portal.dto.ReqRes;
-import com.chatop.portal.entity.OurUsers;
-import com.chatop.portal.repository.OurUserRepo;
+import com.chatop.portal.entity.Users;
+import com.chatop.portal.repository.UsersRepository;
 import com.chatop.portal.services.AuthService;
 
 
@@ -25,7 +25,7 @@ public class AuthController {
     private AuthService authService;
 
     @Autowired
-    private OurUserRepo ourUserRepo;
+    private UsersRepository ourUserRepo;
 
     @PostMapping("/register")
     public ResponseEntity<ReqRes> signUp(@RequestBody ReqRes signUpRequest) {
@@ -37,19 +37,14 @@ public class AuthController {
         return ResponseEntity.ok(authService.signIn(signInRequest));
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<ReqRes> refreshToken(@RequestBody ReqRes refreshTokenRequest) {
-        return ResponseEntity.ok(authService.signIn(refreshTokenRequest));
-    }
     @GetMapping("/me")
     public ResponseEntity<ReqRes> getUserProfile(@AuthenticationPrincipal UserDetails userDetails) {
-        OurUsers ourUser = ourUserRepo.findByEmail(userDetails.getUsername()).orElseThrow();
+        Users users = ourUserRepo.findByEmail(userDetails.getUsername()).orElseThrow();
 
         ReqRes response = new ReqRes();
-        System.out.println(ourUser);
         response.setStatusCode(200);
-        response.setEmail(ourUser.getEmail());
-        response.setRole(ourUser.getRole());
+        response.setEmail(users.getEmail());
+        response.setRole(users.getRole());
 
         return ResponseEntity.ok(response);
     }

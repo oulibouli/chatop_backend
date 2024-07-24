@@ -7,14 +7,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.chatop.portal.dto.ReqRes;
-import com.chatop.portal.entity.OurUsers;
-import com.chatop.portal.repository.OurUserRepo;
+import com.chatop.portal.entity.Users;
+import com.chatop.portal.repository.UsersRepository;
 import com.chatop.portal.utils.JWTUtils;
 
 @Service
 public class AuthService {
     @Autowired
-    private OurUserRepo ourUserRepo;
+    private UsersRepository ourUserRepo;
     @Autowired
     private JWTUtils jwtUtils;
     @Autowired
@@ -25,16 +25,20 @@ public class AuthService {
     public ReqRes signUp(ReqRes registrationrequest) {
         ReqRes resp = new ReqRes();
         try {
-            OurUsers ourUsers = new OurUsers();
+            Users ourUsers = new Users();
             ourUsers.setEmail(registrationrequest.getEmail());
+            ourUsers.setName(registrationrequest.getName());
             ourUsers.setPassword(passwordEncoder.encode(registrationrequest.getPassword()));
-            ourUsers.setRole(registrationrequest.getRole());
-            OurUsers ourUserResult = ourUserRepo.save(ourUsers);
+            ourUsers.setRole("USER");
+            Users ourUserResult = ourUserRepo.save(ourUsers);
 
             if(ourUserResult != null && ourUserResult.getId() > 0) {
                 resp.setOurUsers(ourUserResult);
                 resp.setMessage("User saved successfully");
+                var user = ourUserRepo.findByEmail(registrationrequest.getEmail()).orElseThrow();
+                var jwt = jwtUtils.generateToken(user);
                 resp.setStatusCode(200);
+                resp.setToken(jwt);
             }
         } catch (Exception e) {
             resp.setStatusCode(500);

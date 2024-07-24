@@ -11,7 +11,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.chatop.portal.services.OurUserDetailsService;
+import com.chatop.portal.services.UsersService;
 import com.chatop.portal.utils.JWTUtils;
 
 import jakarta.servlet.FilterChain;
@@ -25,7 +25,7 @@ public class JWTAuthFilter extends OncePerRequestFilter{
     @Autowired
     private JWTUtils jwtUtils;
     @Autowired
-    private OurUserDetailsService ourUserDetailsService;
+    private UsersService ourUserDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

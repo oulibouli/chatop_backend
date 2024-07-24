@@ -17,12 +17,13 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name= "ourusers")
-public class OurUsers implements UserDetails {
+public class Users implements UserDetails {
     
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
     private String email;
+    private String name;
     private String password;
     private String role;
 

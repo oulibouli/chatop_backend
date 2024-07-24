@@ -1,7 +1,7 @@
 package com.chatop.portal.dto;
 
 
-import com.chatop.portal.entity.OurUsers;
+import com.chatop.portal.entity.Users;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -22,5 +22,5 @@ public class ReqRes {
     private String email;
     private String role;
     private String password;
-    private OurUsers ourUsers;
+    private Users ourUsers;
 }

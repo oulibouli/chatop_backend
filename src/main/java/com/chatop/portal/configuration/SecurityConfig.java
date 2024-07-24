@@ -15,13 +15,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.chatop.portal.services.OurUserDetailsService;
+import com.chatop.portal.services.UsersService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     @Autowired
-    private OurUserDetailsService ourUserDetailsService;
+    private UsersService ourUserDetailsService;
     @Autowired
     private JWTAuthFilter jwtAuthFilter;
 
