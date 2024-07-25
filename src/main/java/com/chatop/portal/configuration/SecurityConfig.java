@@ -49,7 +49,7 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults()) // Applies default CORS configuration
             .authorizeHttpRequests(request -> request
             .requestMatchers("/api/auth/**").permitAll()
-            .requestMatchers("/api/rentals/**").hasAnyRole("USER", "ADMIN")
+            .requestMatchers("/api/rentals/**", "/api/messages/").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
             ).sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())
