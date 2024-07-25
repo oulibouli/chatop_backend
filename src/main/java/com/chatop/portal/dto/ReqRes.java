@@ -1,6 +1,8 @@
 package com.chatop.portal.dto;
 
 
+import java.sql.Timestamp;
+
 import com.chatop.portal.entity.Users;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,5 +24,7 @@ public class ReqRes {
     private String email;
     private String role;
     private String password;
+    private Timestamp created_at;
+    private Timestamp updated_at;
     private Users ourUsers;
 }

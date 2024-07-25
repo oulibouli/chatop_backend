@@ -1,5 +1,6 @@
 package com.chatop.portal.entity;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,6 +27,8 @@ public class Users implements UserDetails {
     private String name;
     private String password;
     private String role;
+    private Timestamp created_at;
+    private Timestamp updated_at;
 
     // Get the authorization role for the user
     @Override

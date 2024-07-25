@@ -21,7 +21,7 @@ public class RentalsService {
             .collect(Collectors.toList());
     }
 
-    public Optional<Rentals> getRental(Long id) {
+    public Optional<Rentals> getRental(int id) {
         return rentalsRepository.findById(id);
     }
 
@@ -35,7 +35,7 @@ public class RentalsService {
         return convertToDTO(savedRental);
     }
 
-    public void deleteRental(Long id) {
+    public void deleteRental(int id) {
         rentalsRepository.deleteById(id);
     }
 

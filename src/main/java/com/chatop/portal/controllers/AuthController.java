@@ -43,8 +43,11 @@ public class AuthController {
 
         ReqRes response = new ReqRes();
         response.setStatusCode(200);
+        response.setName(users.getName());
         response.setEmail(users.getEmail());
         response.setRole(users.getRole());
+        response.setCreated_at(users.getCreated_at());
+        response.setUpdated_at(users.getUpdated_at());
 
         return ResponseEntity.ok(response);
     }

@@ -1,5 +1,9 @@
 package com.chatop.portal.services;
 
+
+import java.sql.Timestamp;
+import java.time.Instant;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,11 +29,13 @@ public class AuthService {
     public ReqRes signUp(ReqRes registrationrequest) {
         ReqRes resp = new ReqRes();
         try {
+            Timestamp timestamp = Timestamp.from(Instant.now());
             Users ourUsers = new Users();
             ourUsers.setEmail(registrationrequest.getEmail());
             ourUsers.setName(registrationrequest.getName());
             ourUsers.setPassword(passwordEncoder.encode(registrationrequest.getPassword()));
             ourUsers.setRole("ROLE_USER");
+            ourUsers.setCreated_at(timestamp);
             Users ourUserResult = ourUserRepo.save(ourUsers);
 
             if(ourUserResult != null && ourUserResult.getId() > 0) {

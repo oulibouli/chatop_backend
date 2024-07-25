@@ -24,12 +24,7 @@ public class RentalsController {
 
     @Autowired
     private RentalsService rentalsService;
-    private RentalMapper rentalMapper;
-
-    public RentalsController(RentalsService rentalsService, RentalMapper rentalMapper) {
-        this.rentalsService = rentalsService;
-        this.rentalMapper = rentalMapper;
-    }
+    private final RentalMapper rentalMapper = new RentalMapper();
 
     @GetMapping
     public RentalsResponseDTO getAllRentals() {
@@ -40,7 +35,7 @@ public class RentalsController {
     }
     @Operation(summary="Get the rental by id")
     @GetMapping("/{id}")
-    public ResponseEntity<RentalDTO> getRental(@PathVariable("id") Long id) {
+    public ResponseEntity<RentalDTO> getRental(@PathVariable("id") int id) {
         Optional<Rentals> rentalOpt = rentalsService.getRental(id);
         if (rentalOpt.isPresent()) {
             RentalDTO rentalDTO = rentalMapper.toDTO(rentalOpt.get());
