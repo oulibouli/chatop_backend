@@ -1,6 +1,7 @@
 package com.chatop.portal.entity;
 
-import java.time.LocalDateTime;
+
+import java.sql.Timestamp;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,13 +14,13 @@ public class Rentals {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
     private String name;
-    private int surface;
-    private int price;
+    private double surface;
+    private double price;
     private String picture;
     private String description;
     private int owner_id;
-    private LocalDateTime created_at;
-    private LocalDateTime updated_at;
+    private Timestamp created_at;
+    private Timestamp updated_at;
 
     // Defining the getters / setters
     public int getId() {
@@ -38,19 +39,19 @@ public class Rentals {
         this.name = name;
     }
 
-    public int getSurface() {
+    public double getSurface() {
         return surface;
     }
 
-    public void setSurface(int surface) {
+    public void setSurface(double surface) {
         this.surface = surface;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -78,19 +79,19 @@ public class Rentals {
         this.owner_id = owner_id;
     }
 
-    public LocalDateTime getCreated_at() {
+    public Timestamp getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(LocalDateTime created_at) {
+    public void setCreated_at(Timestamp created_at) {
         this.created_at = created_at;
     }
 
-    public LocalDateTime getUpdated_at() {
+    public Timestamp getUpdated_at() {
         return updated_at;
     }
 
-    public void setUpdated_at(LocalDateTime updated_at) {
+    public void setUpdated_at(Timestamp updated_at) {
         this.updated_at = updated_at;
     }
 }

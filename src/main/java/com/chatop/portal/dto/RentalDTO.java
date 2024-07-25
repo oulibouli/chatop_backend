@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class RentalDTO {
     private int id;
     private String name;
-    private int surface;
+    private double surface;
     private double price;
     private String picture;
     private String description;
@@ -30,11 +30,11 @@ public class RentalDTO {
         this.name = name;
     }
 
-    public int getSurface() {
+    public double getSurface() {
         return surface;
     }
 
-    public void setSurface(int surface) {
+    public void setSurface(double surface) {
         this.surface = surface;
     }
 
@@ -42,7 +42,7 @@ public class RentalDTO {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
