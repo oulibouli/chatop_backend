@@ -46,17 +46,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf(AbstractHttpConfigurer::disable)
-            .cors(Customizer.withDefaults()) // Applies default CORS configuration
-            .authorizeHttpRequests(request -> request
-            .requestMatchers("/api/auth/**").permitAll()
-            .requestMatchers("/api/rentals/**", "/api/messages/").hasAnyRole("USER", "ADMIN")
-                .anyRequest().authenticated()
-            ).sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authenticationProvider(authenticationProvider())
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .cors(Customizer.withDefaults()) // Applies default CORS configuration
+                .formLogin(login -> login.disable()) // Désactive le formulaire de connexion si vous utilisez JWT
+                .httpBasic(basic -> basic.disable()) // Désactive HTTP Basic si vous utilisez JWT
+                .authorizeHttpRequests(request -> request
+                    .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/images/**").permitAll()
+                    .requestMatchers("/api/rentals/**", "/api/messages/").hasAnyRole("USER", "ADMIN")
+                    .anyRequest().authenticated()
+                ).sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
             return http.build();
     }
+    
 
     @Bean
     public CorsFilter corsFilter() {

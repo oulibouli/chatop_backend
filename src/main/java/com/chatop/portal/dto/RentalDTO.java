@@ -1,6 +1,8 @@
 package com.chatop.portal.dto;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
+
+import org.springframework.web.multipart.MultipartFile;
 
 public class RentalDTO {
     private int id;
@@ -10,8 +12,9 @@ public class RentalDTO {
     private String picture;
     private String description;
     private int ownerId;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
+    private MultipartFile pictureFile;
 
      // Getters and Setters
      public int getId() {
@@ -70,19 +73,27 @@ public class RentalDTO {
         this.ownerId = ownerId;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public MultipartFile getPictureFile() {
+        return pictureFile;
+    }
+
+    public void setPictureFile(MultipartFile pictureFile) {
+        this.pictureFile = pictureFile;
     }
 }

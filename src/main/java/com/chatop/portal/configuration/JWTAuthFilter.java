@@ -37,6 +37,11 @@ public class JWTAuthFilter extends OncePerRequestFilter{
         final String jwtToken;
         final String userEmail;
 
+        if(request.getRequestURI().startsWith("/images/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if(authHeader == null || authHeader.isBlank() || !authHeader.startsWith("Bearer ")) {
             logger.warn("Missing or malformed Authorization header");
             filterChain.doFilter(request, response);
