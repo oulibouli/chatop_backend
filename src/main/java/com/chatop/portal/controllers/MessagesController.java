@@ -26,7 +26,7 @@ public class MessagesController {
     @Autowired
     private MessagesService messagesService;
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<ApiResponse> addMessage(@Valid @RequestBody MessagesDTO messageDTO) {
         logger.info("Received request to add message: {}", messageDTO);
         try {
