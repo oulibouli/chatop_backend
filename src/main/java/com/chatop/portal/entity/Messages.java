@@ -18,6 +18,7 @@ public class Messages {
     private String message;
     private Timestamp created_at;
     private Timestamp updated_at;
+    
     public int getId() {
         return id;
     }

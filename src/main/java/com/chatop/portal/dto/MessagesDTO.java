@@ -1,9 +1,14 @@
 package com.chatop.portal.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class MessagesDTO {
 
+    @NotNull(message = "Cannot be null")
     private String message;
+    @NotNull(message = "Cannot be null")
     private Integer rental_id;
+    @NotNull(message = "Cannot be null")
     private Integer user_id;
     
     public String getMessage() {

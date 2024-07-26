@@ -31,44 +31,50 @@ public class JWTAuthFilter extends OncePerRequestFilter{
     private UsersService ourUserDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        final String authHeader = request.getHeader("Authorization");
-        final String jwtToken;
-        final String userEmail;
+protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+        throws ServletException, IOException {
+    final String authHeader = request.getHeader("Authorization");
+    final String jwtToken;
+    final String userEmail;
 
-        if(request.getRequestURI().startsWith("/images/")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        if(authHeader == null || authHeader.isBlank() || !authHeader.startsWith("Bearer ")) {
-            logger.warn("Missing or malformed Authorization header");
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        jwtToken = authHeader.substring(7);
-        try {
-            userEmail = jwtUtils.extractUsername(jwtToken);
-            logger.info("JWT: " + jwtToken);
-            logger.info("Username from JWT: " + userEmail);
-            if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = ourUserDetailsService.loadUserByUsername(userEmail);
-
-                if(jwtUtils.isTokenValid(jwtToken, userDetails)) {
-                    UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                    token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(token);
-                    logger.info("Authenticated user: " + userEmail);
-                }
-            }
-        } catch (Exception e) {
-            logger.error("JWT token processing failed", e);
-        }
-
+    if(request.getRequestURI().startsWith("/images/")) {
         filterChain.doFilter(request, response);
+        return;
     }
+
+    if(authHeader == null || authHeader.isBlank() || !authHeader.startsWith("Bearer ")) {
+        logger.warn("Missing or malformed Authorization header");
+        filterChain.doFilter(request, response);
+        return;
+    }
+
+    jwtToken = authHeader.substring(7);
+    try {
+        userEmail = jwtUtils.extractUsername(jwtToken);
+        logger.info("JWT: " + jwtToken);
+        logger.info("Username from JWT: " + userEmail);
+        if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = ourUserDetailsService.loadUserByUsername(userEmail);
+
+            if(jwtUtils.isTokenValid(jwtToken, userDetails)) {
+                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.getAuthorities());
+                token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(token);
+                logger.info("Authenticated user: " + userEmail);
+                logger.info("Authorities: " + userDetails.getAuthorities());
+            } else {
+                logger.warn("Invalid JWT token");
+            }
+        } else {
+            logger.warn("Username is null or user is already authenticated");
+        }
+    } catch (Exception e) {
+        logger.error("JWT token processing failed", e);
+    }
+
+    filterChain.doFilter(request, response);
+}
+
 
 }

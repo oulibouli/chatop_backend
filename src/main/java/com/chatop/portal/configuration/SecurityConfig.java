@@ -1,4 +1,5 @@
 package com.chatop.portal.configuration;
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,10 @@ import com.chatop.portal.services.UsersService;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -50,9 +55,8 @@ public class SecurityConfig {
                 .formLogin(login -> login.disable()) // Désactive le formulaire de connexion si vous utilisez JWT
                 .httpBasic(basic -> basic.disable()) // Désactive HTTP Basic si vous utilisez JWT
                 .authorizeHttpRequests(request -> request
-                    .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/images/**").permitAll()
-                    .requestMatchers("/api/rentals/**", "/api/messages/").hasAnyRole("USER", "ADMIN")
+                    .requestMatchers("/api/auth/**", "/images/**").permitAll()
+                    .requestMatchers("/api/rentals/**", "/api/messages").hasAnyRole("USER", "ADMIN")
                     .anyRequest().authenticated()
                 ).sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
@@ -63,17 +67,30 @@ public class SecurityConfig {
     
 
     @Bean
-    public CorsFilter corsFilter() {
-        CorsConfiguration config = new CorsConfiguration().applyPermitDefaultValues(); // Applies default CORS configuration
-        config.setAllowedOrigins(List.of(corsOrigins)); // Sets allowed origins
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Sets allowed methods
-        config.setAllowedHeaders(List.of("*")); // Sets allowed headers
-        config.setAllowCredentials(true); // Allows credentials
+public CorsFilter corsFilter() {
+    CorsConfiguration config = new CorsConfiguration();
+    config.setAllowedOrigins(List.of(corsOrigins.split(",")));
+    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+    config.setAllowCredentials(true);
+    config.addExposedHeader("Authorization");
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config); // Registers the CORS configuration for all paths
-        return new CorsFilter(source);
-    }
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config);
+
+    return new CorsFilter(source) {
+        @Override
+        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+                throws ServletException, IOException {
+            if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+                response.setStatus(HttpServletResponse.SC_OK);
+                return;
+            }
+            super.doFilterInternal(request, response, filterChain);
+        }
+    };
+}
+
     
     @Bean
     public AuthenticationProvider authenticationProvider() {

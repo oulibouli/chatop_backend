@@ -16,7 +16,10 @@ import com.chatop.portal.entity.Users;
 import com.chatop.portal.repository.UsersRepository;
 import com.chatop.portal.services.AuthService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+
+@Tag(name = "Authentication")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -43,6 +46,7 @@ public class AuthController {
 
         ReqRes response = new ReqRes();
         response.setStatusCode(200);
+        response.setId(users.getId());
         response.setName(users.getName());
         response.setEmail(users.getEmail());
         response.setRole(users.getRole());
