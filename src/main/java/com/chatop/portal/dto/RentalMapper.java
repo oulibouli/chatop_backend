@@ -16,7 +16,7 @@ public class RentalMapper {
         dto.setPrice(rental.getPrice());
         dto.setPicture(rental.getPicture());
         dto.setDescription(rental.getDescription());
-        dto.setOwnerId(rental.getOwnerId());
+        dto.setOwnerId(rental.getOwner_id());
         dto.setCreated_at(rental.getCreated_at());
         dto.setUpdated_at(rental.getUpdated_at());
         return dto;

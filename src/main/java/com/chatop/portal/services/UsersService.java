@@ -14,10 +14,11 @@ import com.chatop.portal.entity.Users;
 import com.chatop.portal.repository.UsersRepository;
 
 @Service
-public class UsersService implements UserDetailsService{
+public class UsersService implements UserDetailsService {
 
     @Autowired
     private UsersRepository usersRepository;
+    
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return usersRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));

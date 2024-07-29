@@ -3,6 +3,8 @@ package com.chatop.portal.utils;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +25,7 @@ public class JWTUtils {
 
     @Value("${jwt.secret}")
     private String secretString;
-    private static final long EXPIRATION_TIME = 86400000; // 24 hours
+    private static final long EXPIRATION_TIME=86400000; // 24 hours
 
 
     // Decodes the secret key and prepares it for signing the JWT.
@@ -32,16 +34,24 @@ public class JWTUtils {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        String token =  Jwts.builder()
-            .setSubject(userDetails.getUsername())
-            .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-            .signWith(getSignKey(), SignatureAlgorithm.HS256)
-            .compact();
+    public String generateToken(String userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        return createToken(claims, userDetails);
+    }
 
-            System.out.println("Generated Token: " + token);
-            return token;
+    // Helper method to create the token.
+    private String createToken(Map<String, Object> claims, String userName) {
+        long expirationTimeLong = 1000 * 60 * 15; // 15 min expiration time.
+        final Date createdDate = new Date();
+        final Date expirationDate = new Date(createdDate.getTime() + expirationTimeLong);
+
+        // Builds the JWT with the specified claims, subject, issue date, expiration, and signature algorithm.
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(userName)
+                .setIssuedAt(createdDate)
+                .setExpiration(expirationDate)
+                .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
 
 
