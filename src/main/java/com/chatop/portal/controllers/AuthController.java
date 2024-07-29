@@ -16,6 +16,7 @@ import com.chatop.portal.entity.Users;
 import com.chatop.portal.repository.UsersRepository;
 import com.chatop.portal.services.AuthService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 
@@ -30,16 +31,19 @@ public class AuthController {
     @Autowired
     private UsersRepository ourUserRepo;
 
+    @Operation(summary="Create a new user")
     @PostMapping("/register")
     public ResponseEntity<ReqRes> signUp(@RequestBody ReqRes signUpRequest) {
         return ResponseEntity.ok(authService.signUp(signUpRequest));
     }
 
+    @Operation(summary="Login to an existing user")
     @PostMapping("/login")
     public ResponseEntity<ReqRes> signIn(@RequestBody ReqRes signInRequest) {
         return ResponseEntity.ok(authService.signIn(signInRequest));
     }
 
+    @Operation(summary="Get the user connected")
     @GetMapping("/me")
     public ResponseEntity<ReqRes> getUserProfile(@AuthenticationPrincipal UserDetails userDetails) {
         Users users = ourUserRepo.findByEmail(userDetails.getUsername()).orElseThrow();

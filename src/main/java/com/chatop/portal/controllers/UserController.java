@@ -15,6 +15,10 @@ import com.chatop.portal.dto.UserMapper;
 import com.chatop.portal.entity.Users;
 import com.chatop.portal.services.UsersService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name="Users")
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -23,6 +27,7 @@ public class UserController {
     private UsersService usersService;
     private final UserMapper userMapper = new UserMapper();
 
+    @Operation(summary="Get a user by id")
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUser(@PathVariable("id") Integer id) {
         Optional<Users> user = usersService.getUserById(id);

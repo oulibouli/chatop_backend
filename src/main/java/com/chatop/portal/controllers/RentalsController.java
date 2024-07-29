@@ -58,6 +58,7 @@ public class RentalsController {
         return rentalDTO;
     }
 
+    @Operation(summary="Update a rental by id")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse> updateRental(
         @PathVariable int id,

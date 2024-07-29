@@ -29,13 +29,14 @@ public class AuthService {
     public ReqRes signUp(ReqRes registrationrequest) {
         ReqRes resp = new ReqRes();
         try {
-            Timestamp timestamp = Timestamp.from(Instant.now());
+
             Users ourUsers = new Users();
             ourUsers.setEmail(registrationrequest.getEmail());
             ourUsers.setName(registrationrequest.getName());
             ourUsers.setPassword(passwordEncoder.encode(registrationrequest.getPassword()));
             ourUsers.setRole("ROLE_USER");
-            ourUsers.setCreated_at(timestamp);
+            ourUsers.setCreated_at(Timestamp.from(Instant.now()));
+            ourUsers.setUpdated_at(Timestamp.from(Instant.now()));
             Users ourUserResult = ourUserRepo.save(ourUsers);
 
             if(ourUserResult != null && ourUserResult.getId() > 0) {

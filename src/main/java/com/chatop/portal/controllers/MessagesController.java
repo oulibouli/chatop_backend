@@ -13,6 +13,7 @@ import com.chatop.portal.dto.ApiResponse;
 import com.chatop.portal.dto.MessagesDTO;
 import com.chatop.portal.services.MessagesService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -26,6 +27,7 @@ public class MessagesController {
     @Autowired
     private MessagesService messagesService;
 
+    @Operation(summary="Create a new message")
     @PostMapping("")
     public ResponseEntity<ApiResponse> addMessage(@Valid @RequestBody MessagesDTO messageDTO) {
         logger.info("Received request to add message: {}", messageDTO);

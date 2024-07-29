@@ -108,8 +108,8 @@ public class RentalsService {
         dto.setPicture(rental.getPicture());
         dto.setDescription(rental.getDescription());
         dto.setOwnerId(rental.getOwnerId());
-        dto.setCreatedAt(rental.getCreated_at());
-        dto.setUpdatedAt(rental.getUpdated_at());
+        dto.setCreated_at(rental.getCreated_at());
+        dto.setUpdated_at(rental.getUpdated_at());
         return dto;
     }
 
