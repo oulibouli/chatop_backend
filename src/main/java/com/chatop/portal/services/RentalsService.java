@@ -3,22 +3,20 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.chatop.portal.dto.ApiResponse;
 import com.chatop.portal.dto.RentalDTO;
+import com.chatop.portal.dto.RentalMapper;
 import com.chatop.portal.entity.Rentals;
 import com.chatop.portal.entity.Users;
 import com.chatop.portal.exception.NotFoundException;
@@ -31,86 +29,63 @@ public class RentalsService {
     private RentalsRepository rentalsRepository;
     @Autowired
     private UsersRepository usersRepository;
+    @Autowired
+    private RentalMapper rentalMapper;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
     @Value("${app.baseUrl}")
     private String baseUrl;
 
-    public List<RentalDTO> getAllRentals() {
-        return ((List<Rentals>) rentalsRepository.findAll()).stream()
-            .map(this::convertToDTO)
-            .collect(Collectors.toList());
+    public Map<String, Object> getAllRentals() {
+        List<Rentals> rentals = rentalsRepository.findAll();
+        Map<String, Object> response = new HashMap<>();
+        response.put("rentals", rentals);
+        return response;
     }
 
-    public Rentals getRental(int id) {
-        return rentalsRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Rental not found"));
-    }
+    public RentalDTO getRental(int id) {
+        RentalDTO rentalDTO = rentalMapper.toDTO(rentalsRepository.findById(id).orElseThrow(() -> new NotFoundException("Rental not found")));
 
-    public ResponseEntity<ApiResponse> addRental(RentalDTO rentalDTO) {
-
-
-        Timestamp timestamp = Timestamp.from(Instant.now());
-        Rentals rental = new Rentals();
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName();
-        Users currentUser = usersRepository.findByEmail(currentUserEmail).orElse(null);
-        
-        if (currentUser == null) {
-            return new ResponseEntity<>(new ApiResponse("User not found"), HttpStatus.UNAUTHORIZED);
-        }
-
-        rental.setName(rentalDTO.getName());
-        rental.setSurface(rentalDTO.getSurface());
-        rental.setPrice(rentalDTO.getPrice());
-        rental.setDescription(rentalDTO.getDescription());
-        rental.setOwner_id(currentUser.getId());
-        rental.setCreated_at(timestamp);
-        rental.setUpdated_at(timestamp);
-
-
-        if (rentalDTO.getPictureFile() != null && !rentalDTO.getPictureFile().isEmpty()) {
-            try {
-                String pictureUrl = savePictureFile(rentalDTO.getPictureFile());
-                rental.setPicture(pictureUrl);
-            } catch (IOException e) {
-                return new ResponseEntity<>(new ApiResponse("Error saving picture file"), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
-            rental.setPicture(""); // Set a default value or leave empty if no file is provided
-        }
-        rentalsRepository.save(rental);
-        return ResponseEntity.ok(new ApiResponse("Rental created successfully!"));
-    }
-
-    public RentalDTO updateRental(int id, RentalDTO rentalDTO) {
-        Timestamp timestamp = Timestamp.from(Instant.now());
-        Rentals rental = getRental(id);
-
-        rental.setName(rentalDTO.getName());
-        rental.setDescription(rentalDTO.getDescription());
-        rental.setSurface(rentalDTO.getSurface());
-        rental.setPrice(rentalDTO.getPrice());
-        rental.setUpdated_at(timestamp);
-
-        rentalsRepository.save(rental);
         return rentalDTO;
     }
 
-    private RentalDTO convertToDTO(Rentals rental) {
-        RentalDTO dto = new RentalDTO();
-        dto.setId(rental.getId());
-        dto.setName(rental.getName());
-        dto.setSurface(rental.getSurface());
-        dto.setPrice(rental.getPrice());
-        dto.setPicture(rental.getPicture());
-        dto.setDescription(rental.getDescription());
-        dto.setOwnerId(rental.getOwner_id());
-        dto.setCreated_at(rental.getCreated_at());
-        dto.setUpdated_at(rental.getUpdated_at());
-        return dto;
+    public ResponseEntity<String> addRental(RentalDTO rentalDTO) {
+        Users currentUser = usersRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null);
+        
+        if (currentUser == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.UNAUTHORIZED);
+        }
+
+        if (rentalDTO.getPictureFile() != null && !rentalDTO.getPictureFile().isEmpty()) {
+            try {
+                rentalDTO.setPicture(savePictureFile(rentalDTO.getPictureFile()));
+            } catch (IOException e) {
+                return new ResponseEntity<>("Error saving picture file", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            rentalDTO.setPicture(""); // Set a default value or leave empty if no file is provided
+        }
+        Rentals rental = rentalMapper.toEntity(rentalDTO);
+        rental.setOwner_id(currentUser.getId());
+
+        rentalsRepository.save(rental);
+        return ResponseEntity.ok("Rental created successfully!");
+    }
+
+    public ResponseEntity<String> updateRental(int id, RentalDTO rentalDTO) {
+        try {
+            Rentals existingRental = rentalsRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("Rental not found"));
+
+            rentalMapper.updateEntityFromDto(existingRental, rentalDTO);
+            
+            rentalsRepository.save(existingRental);
+
+            return ResponseEntity.ok("Rental updated successfully!");
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error updating rental: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     private String savePictureFile(MultipartFile pictureFile) throws IOException {

@@ -41,9 +41,8 @@ public class JWTUtils {
 
     // Helper method to create the token.
     private String createToken(Map<String, Object> claims, String userName) {
-        long expirationTimeLong = 1000 * 60 * 15; // 15 min expiration time.
         final Date createdDate = new Date();
-        final Date expirationDate = new Date(createdDate.getTime() + expirationTimeLong);
+        final Date expirationDate = new Date(createdDate.getTime() + EXPIRATION_TIME);
 
         // Builds the JWT with the specified claims, subject, issue date, expiration, and signature algorithm.
         return Jwts.builder()

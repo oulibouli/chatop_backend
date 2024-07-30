@@ -1,7 +1,12 @@
 package com.chatop.portal.dto;
 
-import jakarta.validation.constraints.NotNull;
+import java.sql.Timestamp;
+import java.time.Instant;
 
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+@Data
 public class MessagesDTO {
 
     @NotNull(message = "Cannot be null")
@@ -10,24 +15,11 @@ public class MessagesDTO {
     private Integer rental_id;
     @NotNull(message = "Cannot be null")
     private Integer user_id;
+    private Timestamp created_at;
+    private Timestamp updated_at;
     
-    public String getMessage() {
-        return message;
+    {
+        this.created_at = Timestamp.from(Instant.now());
+        this.updated_at = Timestamp.from(Instant.now());
     }
-    public void setMessage(String message) {
-        this.message = message;
-    }
-    public Integer getRental_id() {
-        return rental_id;
-    }
-    public void setRental_id(Integer rental_id) {
-        this.rental_id = rental_id;
-    }
-    public Integer getUser_id() {
-        return user_id;
-    }
-    public void setUser_id(Integer user_id) {
-        this.user_id = user_id;
-    }
-    
 }
