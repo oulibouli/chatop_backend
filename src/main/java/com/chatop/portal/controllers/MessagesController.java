@@ -1,5 +1,7 @@
 package com.chatop.portal.controllers;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +26,7 @@ public class MessagesController {
 
     @Operation(summary="Create a new message")
     @PostMapping("")
-    public ResponseEntity<String> addMessage(@Valid @RequestBody MessagesDTO messageDTO) {
+    public ResponseEntity<Map<String, Object>> addMessage(@Valid @RequestBody MessagesDTO messageDTO) {
         return messagesService.addMessage(messageDTO);
     }
 }

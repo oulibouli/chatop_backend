@@ -56,18 +56,17 @@ public class RentalsController {
 
     @Operation(summary="Update a rental by id")
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateRental(
+    public ResponseEntity<Map<String, Object>> updateRental(
         @PathVariable int id,
         @ModelAttribute RentalDTO rentalDTO
         ) 
     {
-        ResponseEntity<String> response = rentalsService.updateRental(id, rentalDTO);
-        return response;
+        return rentalsService.updateRental(id, rentalDTO);
     }
 
     @Operation(summary = "Create a new rental")
     @PostMapping(value="", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> addRental(
+    public ResponseEntity<Map<String, Object>> addRental(
         @RequestParam("name") String name,
         @RequestParam("surface") int surface,
         @RequestParam("price") double price,

@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,18 +51,18 @@ public class RentalsService {
         return rentalDTO;
     }
 
-    public ResponseEntity<String> addRental(RentalDTO rentalDTO) {
+    public ResponseEntity<Map<String, Object>> addRental(RentalDTO rentalDTO) {
         Users currentUser = usersRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null);
         
         if (currentUser == null) {
-            return new ResponseEntity<>("User not found", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(Collections.singletonMap("message", "User not found"), HttpStatus.UNAUTHORIZED);
         }
 
         if (rentalDTO.getPictureFile() != null && !rentalDTO.getPictureFile().isEmpty()) {
             try {
                 rentalDTO.setPicture(savePictureFile(rentalDTO.getPictureFile()));
             } catch (IOException e) {
-                return new ResponseEntity<>("Error saving picture file", HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>(Collections.singletonMap("message", "Error saving picture file"), HttpStatus.UNAUTHORIZED);
             }
         } else {
             rentalDTO.setPicture(""); // Set a default value or leave empty if no file is provided
@@ -70,10 +71,10 @@ public class RentalsService {
         rental.setOwner_id(currentUser.getId());
 
         rentalsRepository.save(rental);
-        return ResponseEntity.ok("Rental created successfully!");
+        return ResponseEntity.ok(Collections.singletonMap("message", "Rental created !")); // Returns a
     }
 
-    public ResponseEntity<String> updateRental(int id, RentalDTO rentalDTO) {
+    public ResponseEntity<Map<String, Object>> updateRental(int id, RentalDTO rentalDTO) {
         try {
             Rentals existingRental = rentalsRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Rental not found"));
@@ -82,9 +83,9 @@ public class RentalsService {
             
             rentalsRepository.save(existingRental);
 
-            return ResponseEntity.ok("Rental updated successfully!");
+            return ResponseEntity.ok(Collections.singletonMap("message", "Rental updated successfully!"));
         } catch (Exception e) {
-            return new ResponseEntity<>("Error updating rental: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(Collections.singletonMap("message", "Error updating rental: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

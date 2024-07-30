@@ -27,8 +27,6 @@ public class AuthService {
     private UsersRepository usersRepository;
 
     @Autowired
-    private UsersService usersService;
-    @Autowired
     private JWTUtils jwtUtils;
     @Autowired
     private PasswordEncoder passwordEncoder;
