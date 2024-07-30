@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .formLogin(login -> login.disable()) // Désactive le formulaire de connexion si vous utilisez JWT
                 .httpBasic(basic -> basic.disable()) // Désactive HTTP Basic si vous utilisez JWT
                 .authorizeHttpRequests(request -> request
-                    .requestMatchers("/api/auth/**", "/images/**","/v3/api-docs/**","/swagger-ui/**").permitAll()
+                    .requestMatchers("/api/auth/login", "/api/auth/register", "/images/**","/v3/api-docs/**","/swagger-ui/**").permitAll()
                     .requestMatchers("/api/rentals/**", "/api/messages").hasAnyRole("USER", "ADMIN")
                     .anyRequest().authenticated()
                 ).sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

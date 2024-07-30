@@ -5,11 +5,12 @@ import java.sql.Timestamp;
 import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -60,24 +61,23 @@ public class AuthService {
         return resp;
     }
 
-    public AuthDTO signIn(AuthDTO signinRequest) {
+    public ResponseEntity<AuthDTO> signIn(AuthDTO signinRequest) {
         AuthDTO response = new AuthDTO();
         try {
             Authentication authentication = authenticateUser(signinRequest.getEmail(), signinRequest.getPassword());
-            //authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getEmail(), signinRequest.getPassword()));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
             String jwt = jwtUtils.generateToken(authentication.getName());
             response.setStatusCode(200);
             response.setToken(jwt);
             response.setExpirationTime("24Hrs");
             response.setMessage("Successfully signed in");
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            response.setStatusCode(401);
-            response.setError(e.getMessage());
             response.setMessage("error");
+            response.setStatusCode(401);
+            
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-        return response;
     }
 
     public AuthDTO getUserProfile(UserDetails userDetails) {
