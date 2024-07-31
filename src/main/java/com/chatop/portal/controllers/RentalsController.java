@@ -28,8 +28,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api/rentals")
 public class RentalsController {
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
     @Value("${app.baseUrl}")
     private String baseUrl;
 
