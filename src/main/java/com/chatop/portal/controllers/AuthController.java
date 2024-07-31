@@ -14,6 +14,8 @@ import com.chatop.portal.dto.AuthDTO;
 import com.chatop.portal.services.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -30,24 +32,40 @@ public class AuthController {
     private AuthService authService;
 
     // Swagger Annotation
-    @Operation(summary="Create a new user")
+    @Operation(summary = "Create User", description = "Create a new user", responses = 
+    {
+        @ApiResponse(responseCode = "200", description = "User created", content = {@Content(mediaType = "application/json")}),
+        @ApiResponse(responseCode = "400", description = "Name, password, or email cannot be empty.", content = @Content),
+        @ApiResponse(responseCode = "409", description = "A user with this email already exists.", content = @Content),
+        @ApiResponse(responseCode = "500", description = "Server Error", content = @Content)
+    })
     @PostMapping("/register")
     public ResponseEntity<AuthDTO> signUp(@RequestBody AuthDTO signUpRequest) {
         // Call the auth service to register a new user
-        return ResponseEntity.ok(authService.signUp(signUpRequest));
+        return authService.signUp(signUpRequest);
     }
 
-    @Operation(summary="Login to an existing user")
+    @Operation(summary = "Login User", description = "Login to an existing user", responses = 
+    {
+        @ApiResponse(responseCode = "200", description = "Successfully signed in", content = {@Content(mediaType = "application/json")}),
+        @ApiResponse(responseCode = "400", description = "Password or email cannot be empty.", content = @Content),
+        @ApiResponse(responseCode = "500", description = "Invalid email or password", content = @Content)
+    })
     @PostMapping("/login")
     public ResponseEntity<AuthDTO> signIn(@RequestBody AuthDTO signInRequest) {
         // Call the auth service to connect a user
         return authService.signIn(signInRequest);
     }
 
-    @Operation(summary="Get the user connected")
+    @Operation(summary = "Logged user infos", description = "Get the user connected", responses = 
+    {
+        @ApiResponse(responseCode = "200", description = "Successfully signed in", content = {@Content(mediaType = "application/json")}),
+        @ApiResponse(responseCode = "400", description = "Password or email cannot be empty.", content = @Content),
+        @ApiResponse(responseCode = "500", description = "Invalid email or password", content = @Content)
+    })
     @GetMapping("/me")
     public ResponseEntity<AuthDTO> getUserProfile(@Valid @AuthenticationPrincipal UserDetails userDetails) {
         // Call the auth service to request the connected user
-        return ResponseEntity.ok(authService.getUserProfile(userDetails));
+        return authService.getUserProfile(userDetails);
     }
 }

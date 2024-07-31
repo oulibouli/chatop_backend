@@ -3,6 +3,8 @@ package com.chatop.portal.dto;
 import java.sql.Timestamp;
 import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -15,7 +17,9 @@ public class MessagesDTO {
     private Integer rental_id;
     @NotNull(message = "Cannot be null")
     private Integer user_id;
+    @JsonIgnore // Ignore this field when get the request
     private Timestamp created_at;
+    @JsonIgnore // Ignore this field when get the request
     private Timestamp updated_at;
     
     {

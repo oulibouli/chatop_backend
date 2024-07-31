@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -47,49 +48,66 @@ public class RentalsService {
     private String baseUrl; // Base URL for accessing images
 
     // Get all rentals and returns them in a map
-    public Map<String, Object> getAllRentals() {
-        List<Rentals> rentals = rentalsRepository.findAll();
-
+    public ResponseEntity<Map<String, Object>> getAllRentals() {
         Map<String, Object> response = new HashMap<>();
-        response.put("rentals", rentals);
-        return response;
+        try {
+            List<Rentals> rentals = rentalsRepository.findAll();
+            response.put("rentals", rentals);
+        }
+        catch (Exception e) {
+            // Handle any other exceptions by setting the error details in the response
+            response.put("message", "Error retrieving rentals: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // Get a rental by its ID and returns it as a RentalDTO
-    public RentalDTO getRental(int id) {
-        RentalDTO rentalDTO = rentalMapper.toDTO(
-            rentalsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Rental not found"))
-        );
-        return rentalDTO;
+    public ResponseEntity<RentalDTO> getRental(int id) {
+        RentalDTO rentalDTO = new RentalDTO();
+        try {
+            rentalDTO = rentalMapper.toDTO(rentalsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Rental not found")));
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(rentalDTO, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(rentalDTO, HttpStatus.OK);
     }
 
     // Adds a new rental with the provided RentalDTO
     public ResponseEntity<Map<String, Object>> addRental(RentalDTO rentalDTO) {
-        // Gets the currently authenticated user
-        Users currentUser = usersRepository.findByEmail(
-            SecurityContextHolder.getContext().getAuthentication().getName()
-        ).orElse(null);
-        
-        if (currentUser == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-        }
+        try {
+            // Gets the currently authenticated user
+            Users currentUser = usersRepository.findByEmail(
+                SecurityContextHolder.getContext().getAuthentication().getName()
+            ).orElseThrow(() -> new UsernameNotFoundException("User not found"));       
 
-        // If a picture file is provided, save it and set the file path
-        if (rentalDTO.getPictureFile() != null && !rentalDTO.getPictureFile().isEmpty()) {
-            try {
-                rentalDTO.setPicture(savePictureFile(rentalDTO.getPictureFile()));
-            } catch (IOException e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error saving picture file");
+            // If a picture file is provided, save it and set the file path
+            if (rentalDTO.getPictureFile() != null && !rentalDTO.getPictureFile().isEmpty()) {
+                try {
+                    rentalDTO.setPicture(savePictureFile(rentalDTO.getPictureFile()));
+                } catch (IOException e) {
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error saving picture file");
+                }
+            } else {
+                rentalDTO.setPicture(""); // Set an empty picture path if no file is provided
             }
-        } else {
-            rentalDTO.setPicture(""); // Set an empty picture path if no file is provided
+
+            Rentals rental = rentalMapper.toEntity(rentalDTO);
+            rental.setOwner_id(currentUser.getId()); // Set the owner ID to the current user
+
+            rentalsRepository.save(rental);
+            return ResponseEntity.ok(Collections.singletonMap("message", "Rental created!"));
+
         }
-
-        Rentals rental = rentalMapper.toEntity(rentalDTO);
-        rental.setOwner_id(currentUser.getId()); // Set the owner ID to the current user
-
-        rentalsRepository.save(rental);
-        return ResponseEntity.ok(Collections.singletonMap("message", "Rental created!"));
+        catch(UsernameNotFoundException e) {
+            return new ResponseEntity<>(Collections.singletonMap("message", e.getMessage()), HttpStatus.NOT_FOUND);
+        }
+        catch(ResponseStatusException e) {
+            return new ResponseEntity<>(Collections.singletonMap("message", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        catch(Exception e) {
+            return new ResponseEntity<>(Collections.singletonMap("message", "Error creating the rental"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // Updates an existing rental by its ID with the provided RentalDTO

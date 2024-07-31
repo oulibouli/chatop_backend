@@ -13,6 +13,8 @@ import com.chatop.portal.dto.MessagesDTO;
 import com.chatop.portal.services.MessagesService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -28,7 +30,11 @@ public class MessagesController {
     private MessagesService messagesService;
 
     // Swagger Annotation
-    @Operation(summary="Create a new message")
+    @Operation(summary = "Create message", description = "Create a new message", responses = 
+    {
+        @ApiResponse(responseCode = "200", description = "Message sent successfully", content = {@Content(mediaType = "application/json")}),
+        @ApiResponse(responseCode = "401", description = "Error occurred while sending message", content = @Content),
+    })
     @PostMapping("")
     public ResponseEntity<Map<String, Object>> addMessage(@Valid @RequestBody MessagesDTO messageDTO) {
         // Call the message service to add a new message

@@ -36,9 +36,15 @@ public class AuthService {
     private AuthMapper authMapper;
 
     // Method for user signup
-    public AuthDTO signUp(AuthDTO authDTO) {
+    public ResponseEntity<AuthDTO> signUp(AuthDTO authDTO) {
         AuthDTO response = new AuthDTO();
         try {
+            if("".equals(authDTO.getEmail()) || "".equals(authDTO.getName()) || "".equals(authDTO.getPassword())) {
+                throw new IllegalArgumentException("Name, password, or email cannot be empty.");
+            }
+            if(usersRepository.existsByEmail(authDTO.getEmail())) {
+                throw new IllegalStateException("A user with this email already exists.");
+            }
             // Map AuthDTO to Users entity
             Users newUser = authMapper.toEntity(authDTO);
             // Save the new user to the repository
@@ -47,25 +53,38 @@ public class AuthService {
             // If the user is saved successfully, set the response details
             if(newUser != null && newUser.getId() > 0) {
                 response.setUser(newUser);
-                response.setMessage("User saved successfully");
                 String jwt = jwtUtils.generateToken(newUser.getEmail());
-                response.setStatusCode(200);
                 response.setToken(jwt);
             }
+        }
+        catch (IllegalArgumentException e) {
+             // Return bad request if there is an illegal argument
+            response.setStatusCode(400);
+            response.setError(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }catch (IllegalStateException e) {
+            // Return conflict if the user already exists
+            response.setStatusCode(409);
+            response.setError(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         } catch (Exception e) {
-            // Handle any exceptions by setting the error details in the response
+            // Handle any other exceptions by setting the error details in the response
             response.setStatusCode(500);
             response.setError(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return response;
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // Method for user signin
-    public ResponseEntity<AuthDTO> signIn(AuthDTO signinRequest) {
+    public ResponseEntity<AuthDTO> signIn(AuthDTO authDTO) {
         AuthDTO response = new AuthDTO();
         try {
+            if("".equals(authDTO.getEmail()) || "".equals(authDTO.getPassword())) {
+                throw new IllegalArgumentException("Password or email cannot be empty.");
+            }
             // Authenticate the user with the provided credentials
-            Authentication authentication = authenticateUser(signinRequest.getEmail(), signinRequest.getPassword());
+            Authentication authentication = authenticateUser(authDTO.getEmail(), authDTO.getPassword());
             // Generate a JWT token for the authenticated user
             String jwt = jwtUtils.generateToken(authentication.getName());
             // Set the response details
@@ -73,20 +92,34 @@ public class AuthService {
             response.setToken(jwt);
             response.setExpirationTime("24Hrs");
             response.setMessage("Successfully signed in");
+        } catch (IllegalArgumentException e) {
+            // Return bad request if there is an illegal argument
+           response.setStatusCode(400);
+           response.setError(e.getMessage());
+           return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+       } catch (Exception e) {
+           // Handle any other exceptions by setting the error details in the response
+           response.setStatusCode(500);
+           response.setError(e.getMessage());
+           return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+       }
 
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            // Handle any exceptions by setting the error details in the response
-            response.setMessage("error");
-            response.setStatusCode(401);
-            
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
+       return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // Method to get the user profile based on user details
-    public AuthDTO getUserProfile(UserDetails userDetails) {
-        return authMapper.toDTO(userDetails);
+    public ResponseEntity<AuthDTO> getUserProfile(UserDetails userDetails) {
+        AuthDTO response = new AuthDTO();
+        try {
+            response = authMapper.toDTO(userDetails);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            // Handle any other exceptions by setting the error details in the response
+            response.setStatusCode(500);
+            response.setError(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // Method to authenticate a user with the authentication manager.

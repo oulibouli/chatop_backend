@@ -26,8 +26,6 @@ import org.springframework.web.filter.CorsFilter;
 
 import com.chatop.portal.services.UsersService;
 
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,12 +33,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration // Spring configuration class
 @EnableWebSecurity // Enable the web security in the app
-@SecurityScheme(
-        name = "Bearer Authentication",
-        type = SecuritySchemeType.HTTP,
-        bearerFormat = "JWT",
-        scheme = "bearer"
-) // Define the security scheme
 public class SecurityConfig {
     
     @Autowired

@@ -11,6 +11,8 @@ import com.chatop.portal.dto.UserDTO;
 import com.chatop.portal.services.UsersService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 // Swagger annotation
@@ -23,7 +25,10 @@ public class UserController {
     @Autowired
     private UsersService usersService;
 
-    @Operation(summary="Get a user by id")
+    @Operation(summary = "Get User", description = "Get a user by id", responses = {
+        @ApiResponse(responseCode = "200", description = "User found", content = {@Content(mediaType = "application/json")}),
+        @ApiResponse(responseCode = "404", description = "Not found", content = @Content)
+        })
     @GetMapping("/{id}")
     // This method manages a GET HTTP request to get a user per id
     public ResponseEntity<UserDTO> getUser(@PathVariable("id") Integer id) {

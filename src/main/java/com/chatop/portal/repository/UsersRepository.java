@@ -10,4 +10,5 @@ import com.chatop.portal.entity.Users;
 @Repository // Define the interface as a Spring Repository
 public interface UsersRepository extends JpaRepository<Users, Integer> {
     Optional<Users> findByEmail(String email);
+    boolean existsByEmail(String email);
 }

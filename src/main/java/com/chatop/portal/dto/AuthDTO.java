@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 
 import com.chatop.portal.entity.Users;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -33,6 +34,7 @@ public class AuthDTO {
     private String password;
     private Timestamp created_at;
     private Timestamp updated_at;
+    @JsonIgnore // Ignore this field when get the request
     private Users user;
 
     {

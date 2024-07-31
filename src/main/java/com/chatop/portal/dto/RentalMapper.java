@@ -60,12 +60,24 @@ public class RentalMapper {
     // Updates an existing Rentals entity from a RentalDTO object.
     public void updateEntityFromDto(Rentals existingRental, RentalDTO rentalDTO) {
         
-        // Updating existingRental fields from rentalDTO
-        existingRental.setName(rentalDTO.getName());
-        existingRental.setDescription(rentalDTO.getDescription());
-        existingRental.setSurface(rentalDTO.getSurface());
-        existingRental.setPrice(rentalDTO.getPrice());
-        existingRental.setPicture(rentalDTO.getPicture());
+        // Checking and updating individual fields if they are not null or zero.
+        if (rentalDTO.getName() != null) {
+            existingRental.setName(rentalDTO.getName());
+        }
+        if (rentalDTO.getDescription() != null) {
+            existingRental.setDescription(rentalDTO.getDescription());
+        }
+        if (rentalDTO.getSurface() != 0) {
+            existingRental.setSurface(rentalDTO.getSurface());
+        }
+        if (rentalDTO.getPrice() != 0) {
+            existingRental.setPrice(rentalDTO.getPrice());
+        }
+        if (rentalDTO.getPicture() != null) {
+            existingRental.setPicture(rentalDTO.getPicture());
+        }
+        
+        // Setting the updated_at field to the current time.
         existingRental.setUpdated_at(rentalDTO.getUpdated_at());
     }
 }
