@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.chatop.portal.dto.MessagesDTO;
+import com.chatop.portal.dto.MessagesMapper;
 import com.chatop.portal.entity.Messages;
 import com.chatop.portal.repository.MessagesRepository;
 
@@ -17,17 +18,12 @@ public class MessagesService {
 
     @Autowired
     private MessagesRepository messagesRepository;
+    @Autowired
+    private MessagesMapper messagesMapper;
 
     public ResponseEntity<Map<String, Object>> addMessage(MessagesDTO messageDTO) {
         try {        
-            Messages message = new Messages();
-
-            message.setMessage(messageDTO.getMessage());
-            message.setRental_id(messageDTO.getRental_id());
-            message.setUser_id(messageDTO.getUser_id());
-
-            message.setCreated_at(messageDTO.getCreated_at());
-            message.setUpdated_at(messageDTO.getUpdated_at());
+            Messages message = messagesMapper.toEntity(messageDTO);
 
             messagesRepository.save(message);
             

@@ -2,6 +2,7 @@ package com.chatop.portal.dto;
 
 
 import java.sql.Timestamp;
+import java.time.Instant;
 
 import com.chatop.portal.entity.Users;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -28,4 +29,9 @@ public class AuthDTO {
     private Timestamp created_at;
     private Timestamp updated_at;
     private Users ourUsers;
+
+    {
+        this.created_at = Timestamp.from(Instant.now());
+        this.updated_at = Timestamp.from(Instant.now());
+    }
 }

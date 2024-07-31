@@ -1,9 +1,6 @@
 package com.chatop.portal.services;
 
 
-import java.sql.Timestamp;
-import java.time.Instant;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +9,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.chatop.portal.dto.AuthDTO;
+import com.chatop.portal.dto.AuthMapper;
 import com.chatop.portal.entity.Users;
 import com.chatop.portal.exception.AuthFailedException;
 import com.chatop.portal.repository.UsersRepository;
@@ -29,21 +26,15 @@ public class AuthService {
     @Autowired
     private JWTUtils jwtUtils;
     @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private AuthMapper authMapper;
 
-    public AuthDTO signUp(AuthDTO registrationrequest) {
+    public AuthDTO signUp(AuthDTO authDTO) {
         AuthDTO resp = new AuthDTO();
         try {
-            Users user = new Users();
-            user.setEmail(registrationrequest.getEmail());
-            user.setName(registrationrequest.getName());
-            user.setPassword(passwordEncoder.encode(registrationrequest.getPassword()));
-            user.setRole("ROLE_USER");
-            user.setCreated_at(Timestamp.from(Instant.now()));
-            user.setUpdated_at(Timestamp.from(Instant.now()));
-            Users newUser = usersRepository.save(user);
+            Users newUser = authMapper.toEntity(authDTO);
+            newUser = usersRepository.save(newUser);
 
             if(newUser != null && newUser.getId() > 0) {
                 resp.setOurUsers(newUser);
@@ -79,21 +70,7 @@ public class AuthService {
     }
 
     public AuthDTO getUserProfile(UserDetails userDetails) {
-        AuthDTO authDTO = new AuthDTO();
-        try {
-            Users user = usersRepository.findByEmail(userDetails.getUsername()).orElseThrow();
-            authDTO.setId(user.getId());
-            authDTO.setName(user.getName());
-            authDTO.setEmail(user.getEmail());
-            authDTO.setRole(user.getRole());
-            authDTO.setCreated_at(user.getCreated_at());
-            authDTO.setUpdated_at(user.getUpdated_at());
-            authDTO.setStatusCode(200);
-        } catch (Exception e) {
-            authDTO.setStatusCode(500);
-            authDTO.setError(e.getMessage());
-        }
-        return authDTO;
+        return authMapper.toDTO(userDetails);
     }
 
     // Helper method to authenticate a user with the authentication manager.
