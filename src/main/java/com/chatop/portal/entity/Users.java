@@ -12,16 +12,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.Data;
 
-@Data
-@Entity
-@Table(name= "users")
+@Data // Automatically define the getters and setters
+@Entity // Define the class as an entity
 public class Users implements UserDetails {
     
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Id // Primary key in the table
+    @GeneratedValue(strategy= GenerationType.IDENTITY) // Generates the id automatically by the BD
     private Integer id;
     private String email;
     private String name;
@@ -34,13 +32,10 @@ public class Users implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         
-        return List.of(new SimpleGrantedAuthority(role));
-
+        return List.of(new SimpleGrantedAuthority(role)); // Return a list of roles
     }
-
     @Override
     public String getUsername() {
         return email;
     }
-
 }

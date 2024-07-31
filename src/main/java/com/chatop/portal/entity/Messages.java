@@ -8,12 +8,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 
-@Data // Automatically define the
-@Entity
+@Data // Automatically define the getters and setters
+@Entity // Define the class as an entity
 public class Messages {
-
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Id // Primary key in the table
+    @GeneratedValue(strategy=GenerationType.IDENTITY) // Generates the id automatically by the BD
     private int id;
     private int rental_id;
     private int user_id;

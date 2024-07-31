@@ -7,13 +7,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-@Data
+@Data // Generates automatically the getters and setters
 public class RentalDTO {
     private int id;
+    @NotNull(message = "Cannot be null")
     private String name;
+    @NotNull(message = "Cannot be null")
     private double surface;
+    @NotNull(message = "Cannot be null")
     private double price;
     private String picture;
     private String description;

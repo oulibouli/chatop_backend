@@ -1,17 +1,12 @@
 package com.chatop.portal.utils;
 
-
 import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
-import com.chatop.portal.exception.TokenErrorException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -23,66 +18,65 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JWTUtils {
 
+    // Inject the secret key from the properties file
     @Value("${jwt.secret}")
     private String secretString;
-    private static final long EXPIRATION_TIME=86400000; // 24 hours
+    
+    // Token validity in ms
+    private static final long EXPIRATION_TIME = 86400000; // 24 hours
 
-
-    // Decodes the secret key and prepares it for signing the JWT.
+    // Decode the secret key and prepare it to sign the JWT
     private Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretString);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails);
-    }
-
-    // Helper method to create the token.
-    private String createToken(Map<String, Object> claims, String userName) {
+    // Generate a JWT Token for the user
+    public String generateToken(String userName) {
         final Date createdDate = new Date();
         final Date expirationDate = new Date(createdDate.getTime() + EXPIRATION_TIME);
 
-        // Builds the JWT with the specified claims, subject, issue date, expiration, and signature algorithm.
+        // Build the JWT with the claims : Subject, Created date, expiration date and the algorythm signature
         return Jwts.builder()
-                .setClaims(claims)
                 .setSubject(userName)
                 .setIssuedAt(createdDate)
                 .setExpiration(expirationDate)
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
 
-
+    // Extract the user's username from the JWT token.
     public String extractUsername(String token) {
         System.out.println("Extracting Username from Token: " + token);
         return extractClaim(token, Claims::getSubject);
     }
 
-    // Extracts a specific claim from the JWT using a Claims resolver function.
+    // Extract a specific claim from the JWT
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
-    // Extracts all claims from a JWT.
+    // Extract all the claims from the JWT
     private Claims extractAllClaims(String token) {
         try {
             return Jwts.parserBuilder()
-                    .setSigningKey(getSignKey()) // Sets the signing key for validation.
+                    .setSigningKey(getSignKey()) // Définit la clé de signature pour la validation.
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-        } catch (JwtException ex) {
-            throw new TokenErrorException("JWT validation error: " + ex.getMessage());
+        } catch (JwtException e) {
+            // Lance une exception personnalisée en cas d'erreur de validation du JWT.
+            throw new JwtException("JWT validation error: " + e.getMessage());
         }
     }
 
+    // Check if the JWT Token is valid by comparing with the extracted username and checking the expiration
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
+    // Check it the JWT token is expired
     public boolean isTokenExpired(String token) {
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }

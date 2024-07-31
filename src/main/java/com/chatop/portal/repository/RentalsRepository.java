@@ -6,6 +6,4 @@ import org.springframework.stereotype.Repository;
 import com.chatop.portal.entity.Rentals;
 
 @Repository // Declare this interface as a repository
-public interface RentalsRepository extends JpaRepository<Rentals, Integer> {
-
-}
+public interface RentalsRepository extends JpaRepository<Rentals, Integer> {}
