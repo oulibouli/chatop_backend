@@ -80,3 +80,8 @@ To get access to all the APIs :
 3. Click on the `Authorize` button.
 4. Paste the token value into the field.
 5. Now you can use the others endpoints.
+
+## Routes implemented
+
+See the file in the path :
+> src/main/resources/routes

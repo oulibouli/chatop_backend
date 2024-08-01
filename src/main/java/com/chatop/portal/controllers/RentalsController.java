@@ -42,8 +42,8 @@ public class RentalsController {
 
     @Operation(summary = "Get rentals", description = "Get all the rentals", responses = 
     {
-        @ApiResponse(responseCode = "200", description = "Message sent successfully", content = {@Content(mediaType = "application/json")}),
-        @ApiResponse(responseCode = "401", description = "Error occurred while sending message", content = @Content),
+        @ApiResponse(responseCode = "200", description = "Success", content = {@Content(mediaType = "application/json")}),
+        @ApiResponse(responseCode = "500", description = "Error occurred", content = @Content),
     })
     // This method manages a GET HTTP request to request all rentals
     @GetMapping
@@ -54,7 +54,7 @@ public class RentalsController {
 
     @Operation(summary = "Get a rental", description = "Get the rental by id", responses = 
     {
-        @ApiResponse(responseCode = "200", description = "Message sent successfully", content = {@Content(mediaType = "application/json")}),
+        @ApiResponse(responseCode = "200", description = "Success", content = {@Content(mediaType = "application/json")}),
         @ApiResponse(responseCode = "404", description = "Rental not found", content = @Content),
     })
     // This method manages a GET HTTP request to request a rental per id
@@ -83,7 +83,8 @@ public class RentalsController {
     @Operation(summary = "Create a rental", description = "Create a new rental", responses = 
     {
         @ApiResponse(responseCode = "200", description = "Rental created!", content = {@Content(mediaType = "application/json")}),
-        @ApiResponse(responseCode = "404", description = "Error saving picture file", content = @Content),
+        @ApiResponse(responseCode = "400", description = "User for owner_id not found", content = @Content),
+        @ApiResponse(responseCode = "500", description = "Error saving picture file", content = @Content),
         @ApiResponse(responseCode = "500", description = "Error creating the rental", content = @Content),
     })
     // This method manages a POST HTTP request with a MULTIPART_FORM_DATA content

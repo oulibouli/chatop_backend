@@ -64,9 +64,8 @@ public class AuthController {
 
     @Operation(summary = "Logged user infos", description = "Get the user connected", responses = 
     {
-        @ApiResponse(responseCode = "200", description = "Successfully signed in", content = {@Content(mediaType = "application/json")}),
-        @ApiResponse(responseCode = "400", description = "Password or email cannot be empty.", content = @Content),
-        @ApiResponse(responseCode = "500", description = "Invalid email or password", content = @Content)
+        @ApiResponse(responseCode = "200", description = "Success", content = {@Content(mediaType = "application/json")}),
+        @ApiResponse(responseCode = "500", description = "Server Error", content = @Content)
     })
     @GetMapping("/me")
     public ResponseEntity<AuthDTO> getUserProfile(@Valid @AuthenticationPrincipal UserDetails userDetails) {
