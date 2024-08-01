@@ -9,10 +9,10 @@ database.
 
 Before getting started, ensure you have the following installed:
 
-- [Java 17](https://www.oracle.com/java/technologies/downloads/)
+- [Java 22.0.1](https://www.oracle.com/java/technologies/downloads/)
 - [MySQL](https://www.mysql.com/fr/downloads/)
+- [IDE - Development made with Vs code](https://code.visualstudio.com/download)
 - Maven
-- IDE - Development made with Vs code
 - Angular CLI and Nodes.js
 - Java Development Kit (JDK)
 
@@ -35,7 +35,7 @@ Clone these repositories :
 
 ### Configuring the Application
 
-1. Open the `application.properties` file located in the `api/src/main/resources` directory of the project.
+1. Open the [`application.properties`](src/main/resources/application.properties) file located in the `api/src/main/resources` directory of the project.
 2. Update the following properties with yours:
 
 ```properties
@@ -50,8 +50,7 @@ jwt.secret.key=${JWT_KEY}
 ### SQL setup
 
 SQL script to create the schema is available by following this path:
-
-> src/main/resources/sql/script.sql
+[src/main/resources/sql/script.sql](src/main/resources/sql/script.sql)
 
 Do not use the FrontEnd script sql or any other.
 
