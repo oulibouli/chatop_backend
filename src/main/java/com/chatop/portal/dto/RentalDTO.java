@@ -17,7 +17,7 @@ public class RentalDTO {
     private String name;
     private double surface;
     private double price;
-    @JsonProperty(access = Access.WRITE_ONLY)
+    @JsonProperty(access = Access.READ_ONLY)
     private String picture;
     private String description;
     private int ownerId;

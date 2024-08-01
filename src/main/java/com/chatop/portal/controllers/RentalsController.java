@@ -93,7 +93,7 @@ public class RentalsController {
         @RequestParam("surface") int surface,
         @RequestParam("price") double price,
         @RequestParam("description") String description,
-        @RequestParam("pictureFile") MultipartFile pictureFile // Image file
+        @RequestParam("picture") MultipartFile pictureFile // Image file
     ) {
         // Use the rental mapper to convert the parameters into a DTO
         RentalDTO rentalDTO = rentalMapper.toDTOParams(name, surface, price, description, pictureFile);

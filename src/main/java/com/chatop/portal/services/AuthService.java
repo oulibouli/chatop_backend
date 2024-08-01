@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.chatop.portal.dto.AuthDTO;
+import com.chatop.portal.dto.AuthDTOLogin;
+import com.chatop.portal.dto.AuthDTORegister;
 import com.chatop.portal.dto.AuthMapper;
 import com.chatop.portal.entity.Users;
 import com.chatop.portal.repository.UsersRepository;
@@ -36,7 +38,7 @@ public class AuthService {
     private AuthMapper authMapper;
 
     // Method for user signup
-    public ResponseEntity<AuthDTO> signUp(AuthDTO authDTO) {
+    public ResponseEntity<AuthDTO> signUp(AuthDTORegister authDTO) {
         AuthDTO response = new AuthDTO();
         try {
             if("".equals(authDTO.getEmail()) || "".equals(authDTO.getName()) || "".equals(authDTO.getPassword())) {
@@ -77,7 +79,7 @@ public class AuthService {
     }
 
     // Method for user signin
-    public ResponseEntity<AuthDTO> signIn(AuthDTO authDTO) {
+    public ResponseEntity<AuthDTO> signIn(AuthDTOLogin authDTO) {
         AuthDTO response = new AuthDTO();
         try {
             if("".equals(authDTO.getEmail()) || "".equals(authDTO.getPassword())) {

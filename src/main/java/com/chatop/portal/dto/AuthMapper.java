@@ -1,5 +1,8 @@
 package com.chatop.portal.dto;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,14 +25,15 @@ public class AuthMapper {
     private String defaultRole;
 
     // Converts an AuthDTO object to a Users entity.
-    public Users toEntity(AuthDTO authDTO) {
+    public Users toEntity(AuthDTORegister authDTO) {
+        Timestamp now = Timestamp.from(Instant.now());
         Users user = new Users();
         user.setEmail(authDTO.getEmail()); // Setting the email from authDTO to Users entity.
         user.setName(authDTO.getName()); // Setting the name from authDTO to Users entity.
         user.setPassword(passwordEncoder.encode(authDTO.getPassword())); // Encoding the password and setting it.
         user.setRole(defaultRole); // Setting a default role for the user.
-        user.setCreated_at(authDTO.getCreated_at()); // Setting the creation date from authDTO.
-        user.setUpdated_at(authDTO.getUpdated_at()); // Setting the update date from authDTO.
+        user.setCreated_at(now); // Setting the creation date from authDTO.
+        user.setUpdated_at(now); // Setting the update date from authDTO.
 
         return user; // Returning the created Users entity.
     }

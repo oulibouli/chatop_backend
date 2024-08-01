@@ -51,7 +51,7 @@ jwt.secret.key=${JWT_KEY}
 
 SQL script to create the schema is available by following this path:
 
-> src/main/resources/Étapes/sql/script.sql
+> src/main/resources/sql/script.sql
 
 Do not use the FrontEnd script sql or any other.
 
@@ -75,7 +75,7 @@ The Swagger UI is available at http://localhost:3001/swagger-ui/index.html.
 
 To get access to all the APIs :
 
-1. Use the `POST` /api/auth/register endpoint from the `register-controller`.
+1. Use the `POST` /api/auth/register endpoint from `Authentication`.
 2. Copy the token value from the `Response body`.
 3. Click on the `Authorize` button.
 4. Paste the token value into the field.
