@@ -83,5 +83,5 @@ To get access to all the APIs :
 
 ## Routes implemented
 
-See the file in the path :
-> src/main/resources/routes
+See the file :
+[Fichier routes.md](src/main/resources/routes.md)
