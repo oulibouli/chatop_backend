@@ -13,6 +13,9 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.chatop.portal.exceptions.AuthenticationFailureException;
+import com.chatop.portal.exceptions.InvalidJwtTokenException;
+import com.chatop.portal.exceptions.MissingAuthorizationHeaderException;
 import com.chatop.portal.services.UsersService;
 import com.chatop.portal.utils.JWTUtils;
 
@@ -48,15 +51,13 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
         // If the request is about images, don't filter
         if (request.getRequestURI().startsWith("/images/")) {
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response); // Bypass the request and the response to the next filter
             return;
         }
 
         // Check if the authorization header is missing or malformed
         if (authHeader == null || authHeader.isBlank() || !authHeader.startsWith("Bearer ")) {
-            logger.warn("Missing or malformed Authorization header");
-            filterChain.doFilter(request, response);
-            return;
+            throw new MissingAuthorizationHeaderException("Missing or malformed Authorization header");
         }
 
         // Extract the JWT token from the authorization header
@@ -64,8 +65,6 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         try {
             // Extract the username from the JWT token
             userEmail = jwtUtils.extractUsername(jwtToken);
-            logger.info("JWT: " + jwtToken);
-            logger.info("Username from JWT: " + userEmail);
 
             // If the username is not null and the user is not authenticated
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -82,13 +81,13 @@ public class JWTAuthFilter extends OncePerRequestFilter {
                     logger.info("Authenticated user: " + userEmail);
                     logger.info("Authorities: " + userDetails.getAuthorities());
                 } else {
-                    logger.warn("Invalid JWT token");
+                    throw new InvalidJwtTokenException("Invalid JWT token");
                 }
             } else {
-                logger.warn("Username is null or user is already authenticated");
+                throw new AuthenticationFailureException("Username is null or user is already authenticated");
             }
         } catch (UsernameNotFoundException e) {
-            logger.error("JWT token processing failed", e);
+            throw new AuthenticationFailureException("JWT token processing failed");
         }
 
         // Pass the request and the response to the next filter

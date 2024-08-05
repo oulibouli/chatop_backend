@@ -51,9 +51,7 @@ public class AuthMapper {
             authDTO.setRole(user.getRole());
             authDTO.setCreated_at(user.getCreated_at());
             authDTO.setUpdated_at(user.getUpdated_at());
-            authDTO.setStatusCode(200); // Setting the status code to 200 (OK).
         } catch (Exception e) {
-            authDTO.setStatusCode(500); // Setting the status code to 500 (Internal Server Error) in case of an exception.
             authDTO.setError(e.getMessage()); // Setting the error message from the exception.
         }
         return authDTO; // Returning the created AuthDTO object.

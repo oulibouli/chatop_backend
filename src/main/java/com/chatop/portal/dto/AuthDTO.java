@@ -19,12 +19,10 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL) // Don't include null values in the json response
 public class AuthDTO {
 
-    private int statusCode;
     private String error;
     private String message;
     private String token;
-    private String refreshToken;
-    private String expirationTime;
+    @JsonIgnore
     private int id;
     @NotNull(message = "Cannot be null")
     private String name;
@@ -34,7 +32,9 @@ public class AuthDTO {
     private String role;
     @NotNull(message = "Cannot be null")
     private String password;
+    @JsonIgnore
     private Timestamp created_at;
+    @JsonIgnore
     private Timestamp updated_at;
     @JsonIgnore // Ignore this field when get the request
     private Users user;

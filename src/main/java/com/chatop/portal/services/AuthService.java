@@ -60,22 +60,18 @@ public class AuthService {
                 response.setUser(newUser);
                 String jwt = jwtUtils.generateToken(newUser.getEmail());
                 response.setToken(jwt);
-                response.setStatusCode(200);
             }
         }
         catch (IllegalArgumentException e) {
              // Return bad request if there is an illegal argument
-            response.setStatusCode(400);
             response.setError(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }catch (IllegalStateException e) {
             // Return conflict if the user already exists
-            response.setStatusCode(409);
             response.setError(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         } catch (Exception e) {
             // Handle any other exceptions by setting the error details in the response
-            response.setStatusCode(500);
             response.setError(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -94,18 +90,14 @@ public class AuthService {
             // Generate a JWT token for the authenticated user
             String jwt = jwtUtils.generateToken(authentication.getName());
             // Set the response details
-            response.setStatusCode(200);
             response.setToken(jwt);
-            response.setExpirationTime("24Hrs");
             response.setMessage("Successfully signed in");
         } catch (IllegalArgumentException e) {
             // Return bad request if there is an illegal argument
-           response.setStatusCode(400);
            response.setError(e.getMessage());
            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
        } catch (Exception e) {
            // Handle any other exceptions by setting the error details in the response
-           response.setStatusCode(500);
            response.setError(e.getMessage());
            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
        }
@@ -122,7 +114,6 @@ public class AuthService {
         }
         catch (Exception e) {
             // Handle any other exceptions by setting the error details in the response
-            response.setStatusCode(500);
             response.setError(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }

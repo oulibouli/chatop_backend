@@ -45,29 +45,39 @@ public class SecurityConfig {
     private String corsOrigins;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable) // Disable the CSRF protection
-                .cors(Customizer.withDefaults()) // Apply the default CORS configuration
-                .formLogin(login -> login.disable()) // Disable the login form
-                .httpBasic(basic -> basic.disable()) // Disable the HTTP basic authentication
-                .authorizeHttpRequests(request -> request
-                    // Define the authorization access for the URLs
-                    .requestMatchers("/api/auth/login", "/api/auth/register", "/images/**","/v3/api-docs/**","/swagger-ui/**").permitAll()
-                    .requestMatchers("/api/rentals/**", "/api/messages").hasAnyRole("USER", "ADMIN")
-                    // Any request has to be authenticated
-                    .anyRequest().authenticated()
-                )
-                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Define the auth provider
-                .authenticationProvider(authenticationProvider())
-                // Add the JWT filter before the default auth filter
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        .cors(Customizer.withDefaults()) // Apply the default CORS configuration
+        .formLogin(login -> login.disable()) // Disable the login form
+        .httpBasic(basic -> basic.disable()) // Disable the HTTP basic authentication
+        .authorizeHttpRequests(request -> request
+            // Define the authorization access for the URLs
+            .requestMatchers(
+                "/api/auth/login",
+                "/api/auth/register",
+                "/images/**",
+                "/v3/api-docs/**",
+                "/swagger-ui/**"
+            ).permitAll()
+            .requestMatchers(
+                "/api/rentals/**",
+                "/api/messages"
+            ).hasAnyRole("USER", "ADMIN")
+            // Any request has to be authenticated
+            .anyRequest().authenticated()
+        )
+        // Sessions stateless -> No user session keep on server-side
+        .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        // Define the auth provider
+        .authenticationProvider(authenticationProvider())
+        // Add the JWT filter before the default auth filter
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    public CorsFilter corsFilter() {
+    CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         // Configure the authorized origins, methods and headers for the CORS.
         config.setAllowedOrigins(List.of(corsOrigins.split(",")));
@@ -96,7 +106,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         // Define the user service and the password encoder
         daoAuthenticationProvider.setUserDetailsService(usersService);
@@ -106,13 +116,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         // Return the BCrypt password encoder
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         // Return the auth manager from the config
         return authenticationConfiguration.getAuthenticationManager();
     }
