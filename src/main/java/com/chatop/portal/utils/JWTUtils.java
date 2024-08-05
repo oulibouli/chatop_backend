@@ -33,14 +33,11 @@ public class JWTUtils {
 
     // Generate a JWT Token for the user
     public String generateToken(String userName) {
-        final Date createdDate = new Date();
-        final Date expirationDate = new Date(createdDate.getTime() + EXPIRATION_TIME);
-
         // Build the JWT with the claims : Subject, Created date, expiration date and the algorythm signature
         return Jwts.builder()
                 .setSubject(userName)
-                .setIssuedAt(createdDate)
-                .setExpiration(expirationDate)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
 
