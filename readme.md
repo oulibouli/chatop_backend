@@ -84,3 +84,31 @@ To get access to all the APIs :
 
 See the file :
 [Fichier routes.md](src/main/resources/routes.md)
+
+## Dependencies
+### org.springdoc
+springdoc-openapi-starter-webmvc-ui
+### org.springframework.boot
+spring-boot-starter-data-jpa
+### org.springframework.boot
+spring-boot-starter-security
+### io.jsonwebtoken
+jjwt-api
+### io.jsonwebtoken
+jjwt-impl
+### io.jsonwebtoken
+jjwt-jackson
+### org.springframework.boot
+spring-boot-devtools
+### org.springframework.boot
+spring-boot-starter-web
+### org.springframework.boot
+spring-boot-starter-validation
+### com.mysql
+mysql-connector-j
+### org.projectlombok
+lombok
+### org.springframework.boot
+spring-boot-starter-test
+### org.springframework.security
+spring-security-config
