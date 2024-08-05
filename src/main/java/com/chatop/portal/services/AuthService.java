@@ -17,6 +17,7 @@ import com.chatop.portal.dto.AuthMapper;
 import com.chatop.portal.entity.Users;
 import com.chatop.portal.repository.UsersRepository;
 import com.chatop.portal.utils.JWTUtils;
+import com.chatop.portal.utils.StringUtils;
 
 @Service
 public class AuthService {
@@ -41,7 +42,9 @@ public class AuthService {
     public ResponseEntity<AuthDTO> signUp(AuthDTORegister authDTO) {
         AuthDTO response = new AuthDTO();
         try {
-            if("".equals(authDTO.getEmail()) || "".equals(authDTO.getName()) || "".equals(authDTO.getPassword())) {
+            if(StringUtils.isNullOrEmpty(authDTO.getEmail()) || 
+                StringUtils.isNullOrEmpty(authDTO.getName()) || 
+                StringUtils.isNullOrEmpty(authDTO.getPassword())) {
                 throw new IllegalArgumentException("Name, password, or email cannot be empty.");
             }
             if(usersRepository.existsByEmail(authDTO.getEmail())) {
@@ -57,6 +60,7 @@ public class AuthService {
                 response.setUser(newUser);
                 String jwt = jwtUtils.generateToken(newUser.getEmail());
                 response.setToken(jwt);
+                response.setStatusCode(200);
             }
         }
         catch (IllegalArgumentException e) {
