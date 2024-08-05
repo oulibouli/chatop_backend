@@ -42,18 +42,11 @@ public class AuthService {
     public ResponseEntity<AuthDTO> signUp(AuthDTORegister authDTO) {
         AuthDTO response = new AuthDTO();
         try {
-            if(StringUtils.isNullOrEmpty(authDTO.getEmail()) || 
-                StringUtils.isNullOrEmpty(authDTO.getName()) || 
-                StringUtils.isNullOrEmpty(authDTO.getPassword())) {
-                throw new IllegalArgumentException("Name, password, or email cannot be empty.");
-            }
-            if(usersRepository.existsByEmail(authDTO.getEmail())) {
-                throw new IllegalStateException("A user with this email already exists.");
-            }
+            checkRegisterInformations(authDTO);
             // Map AuthDTO to Users entity
             Users newUser = authMapper.toEntity(authDTO);
             // Save the new user to the repository
-            newUser = usersRepository.save(newUser);
+            usersRepository.save(newUser);
 
             // If the user is saved successfully, set the response details
             if(newUser != null && newUser.getId() > 0) {
@@ -82,9 +75,7 @@ public class AuthService {
     public ResponseEntity<AuthDTO> signIn(AuthDTOLogin authDTO) {
         AuthDTO response = new AuthDTO();
         try {
-            if("".equals(authDTO.getEmail()) || "".equals(authDTO.getPassword())) {
-                throw new IllegalArgumentException("Password or email cannot be empty.");
-            }
+            checkLoginInformations(authDTO);
             // Authenticate the user with the provided credentials
             Authentication authentication = authenticateUser(authDTO.getEmail(), authDTO.getPassword());
             // Generate a JWT token for the authenticated user
@@ -129,6 +120,23 @@ public class AuthService {
         } catch (BadCredentialsException e) {
             // Throws an exception if authentication fails due to bad credentials.
             throw new BadCredentialsException("Invalid email or password.");
+        }
+    }
+
+    private void checkRegisterInformations(AuthDTORegister authDTORegister) {
+        if(StringUtils.isNullOrEmpty(authDTORegister.getEmail()) || 
+            StringUtils.isNullOrEmpty(authDTORegister.getName()) || 
+            StringUtils.isNullOrEmpty(authDTORegister.getPassword())) {
+            throw new IllegalArgumentException("Name, password, or email cannot be empty.");
+        }
+        if(usersRepository.existsByEmail(authDTORegister.getEmail())) {
+            throw new IllegalStateException("A user with this email already exists.");
+        }
+    }
+    
+    private void checkLoginInformations(AuthDTOLogin authDTOLogin) {
+        if(StringUtils.isNullOrEmpty(authDTOLogin.getEmail()) || StringUtils.isNullOrEmpty(authDTOLogin.getPassword())){
+            throw new IllegalArgumentException("Password or email cannot be empty.");
         }
     }
 }
