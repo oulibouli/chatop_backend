@@ -8,6 +8,8 @@ import com.chatop.portal.entity.Users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -32,9 +34,9 @@ public class AuthDTO {
     private String role;
     @NotNull(message = "Cannot be null")
     private String password;
-    @JsonIgnore
+    @JsonProperty(access=Access.READ_ONLY)
     private Timestamp created_at;
-    @JsonIgnore
+    @JsonProperty(access=Access.READ_ONLY)
     private Timestamp updated_at;
     @JsonIgnore // Ignore this field when get the request
     private Users user;
