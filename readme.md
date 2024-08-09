@@ -23,17 +23,15 @@ Clone these repositories :
 
 > git clone https://github.com/oulibouli/chatop_backend.git
 
-### Install Dependencies
+### SQL setup
+1. Create database 'chatop'
 
-#### Frontend:
+2. SQL script to create the schema is available by following this path:
+[src/main/resources/sql/script.sql](src/main/resources/sql/script.sql)
 
-> npm install
+    Do not use the FrontEnd script sql or any other.
 
-#### Backend:
-
-> mvn clean install
-
-### Configuring the Application
+### Configure the Application
 
 1. Open the [`application.properties`](src/main/resources/application.properties) file located in the `api/src/main/resources` directory of the project.
 2. Update the following properties with yours:
@@ -47,18 +45,21 @@ spring.datasource.password=${DB_PASSWORD}
 jwt.secret.key=${JWT_KEY}
 ```
 
-### SQL setup
+### Install Dependencies
 
-SQL script to create the schema is available by following this path:
-[src/main/resources/sql/script.sql](src/main/resources/sql/script.sql)
+#### Frontend:
 
-Do not use the FrontEnd script sql or any other.
+> npm install
+
+#### Backend:
+
+> mvn clean install (use sudo if permission error)
 
 ## Run the project
 
 ### BackEnd:
 
-> mvn spring-boot:run
+> mvn spring-boot:run (use sudo if permission error)
 
 Or run the app with your IDE.
 
